@@ -8,7 +8,7 @@
     <!-- now -->
     <version>3.0.1-SNAPSHOT</version>
 
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
 
     <name>my-blog</name>
     <description>My Java Blog project for Spring Boot</description>
@@ -101,7 +101,7 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <scope>runtime</scope>
+<!--            <scope>runtime</scope>-->
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -169,6 +169,10 @@
                 <plugin>
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-maven-plugin</artifactId>
+                    <configuration>
+                        <mainClass>com.my.blog.website.CoreApplication</mainClass>
+                        <layout>ZIP</layout>
+                    </configuration>
                 </plugin>
             </plugins>
         </build>

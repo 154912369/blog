@@ -19,7 +19,7 @@ public interface IContentService {
      * 发布文章
      * @param contents
      */
-    void publish(ContentVo contents);
+    Integer publish(ContentVo contents);
 
     /**
      *查询文章返回多条数据

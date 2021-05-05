@@ -10,6 +10,7 @@ import com.my.blog.website.modal.Bo.ArchiveBo;
 import com.my.blog.website.modal.Bo.RestResponseBo;
 import com.my.blog.website.modal.Vo.CommentVo;
 import com.my.blog.website.modal.Vo.MetaVo;
+import com.my.blog.website.modal.Vo.UserVo;
 import com.my.blog.website.service.IMetaService;
 import com.my.blog.website.service.ISiteService;
 import com.my.blog.website.utils.PatternKit;
@@ -105,6 +106,23 @@ public class IndexController extends BaseController {
     }
 
     /**
+     * 文章页
+     *
+     * @param request 请求
+     * @param cid     文章主键
+     * @return
+     */
+    @GetMapping(value = {"article/edit/{cid}", "article/{cid}.html"})
+    public String editArticle(HttpServletRequest request, @PathVariable String cid) {
+        ContentVo contents = contentService.getContents(cid);
+        if (null == contents || "draft".equals(contents.getStatus())) {
+            return this.render_404();
+        }
+        request.setAttribute("article", contents);
+        return this.render("article_edit");
+    }
+
+    /**
      * 文章页(预览)
      *
      * @param request 请求
@@ -123,6 +141,49 @@ public class IndexController extends BaseController {
         updateArticleHit(contents.getCid(), contents.getHits());
         return this.render("post");
     }
+
+    /**
+     * 文章发表
+     * @param request
+     * @return
+     */
+    @GetMapping(value = "/publish")
+    public String newArticle(HttpServletRequest request) {
+        List<MetaVo> categories = metaService.getMetas(Types.CATEGORY.getType());
+        request.setAttribute("categories", categories);
+        return  this.render("article_edit");
+    }
+
+    /**
+     * 文章发表
+     * @param contents
+     * @param request
+     * @return
+     */
+    @PostMapping(value = "/publish")
+    @ResponseBody
+    @Transactional(rollbackFor = TipException.class)
+    public RestResponseBo publishArticle(ContentVo contents,  HttpServletRequest request) {
+        UserVo users = this.user(request);
+        contents.setAuthorId(users.getUid());
+        contents.setType(Types.ARTICLE.getType());
+        if (StringUtils.isBlank(contents.getCategories())) {
+            contents.setCategories("默认分类");
+        }
+        try {
+            contentService.publish(contents);
+        } catch (Exception e) {
+            String msg = "文章发布失败";
+            if (e instanceof TipException) {
+                msg = e.getMessage();
+            } else {
+                LOGGER.error(msg, e);
+            }
+            return RestResponseBo.fail(msg);
+        }
+        return RestResponseBo.ok();
+    }
+
 
     /**
      * 抽取公共方法

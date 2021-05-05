@@ -44,7 +44,7 @@ public class ContentServiceImpl implements IContentService {
     private IMetaService metasService;
 
     @Override
-    public void publish(ContentVo contents) {
+    public Integer publish(ContentVo contents) {
         if (null == contents) {
             throw new TipException("文章对象为空");
         }
@@ -93,6 +93,7 @@ public class ContentServiceImpl implements IContentService {
 
         metasService.saveMetas(cid, tags, Types.TAG.getType());
         metasService.saveMetas(cid, categories, Types.CATEGORY.getType());
+        return cid;
     }
 
     @Override

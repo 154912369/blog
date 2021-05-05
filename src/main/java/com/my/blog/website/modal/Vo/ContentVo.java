@@ -33,6 +33,7 @@ public class ContentVo implements Serializable {
 
     /**
      * 内容所属用户id
+     *
      */
     private Integer authorId;
 

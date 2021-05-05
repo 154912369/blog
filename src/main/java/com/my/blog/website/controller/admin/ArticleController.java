@@ -106,8 +106,9 @@ public class ArticleController extends BaseController {
         if (StringUtils.isBlank(contents.getCategories())) {
             contents.setCategories("默认分类");
         }
+        Integer cid = -1;
         try {
-            contentsService.publish(contents);
+             cid=contentsService.publish(contents);
         } catch (Exception e) {
             String msg = "文章发布失败";
             if (e instanceof TipException) {
@@ -117,7 +118,7 @@ public class ArticleController extends BaseController {
             }
             return RestResponseBo.fail(msg);
         }
-        return RestResponseBo.ok();
+        return RestResponseBo.ok(cid);
     }
 
     /**
